@@ -1,0 +1,27 @@
+{
+  "name": "node-projects",
+  "version": "1.0.0",
+  "description": "Chat App RESTful API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Bahaaib/ChatApp-RESTful-API.git"
+  },
+  "keywords": [
+    "node",
+    "restful",
+    "api"
+  ],
+  "author": "Bahaa Ibrahim",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Bahaaib/ChatApp-RESTful-API/issues"
+  },
+  "homepage": "https://github.com/Bahaaib/ChatApp-RESTful-API#readme",
+  "dependencies": {
+    "express": "^4.16.4"
+  }
+}
