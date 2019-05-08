@@ -2,6 +2,15 @@ const express = require('express');
 const app = express();
 const morgan = require('morgan');
 const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
+
+//Mongo DB ATLAS setup
+mongoose.connect('mongodb+srv://iBahaa:'+ 
+process.env.MONGO_DB_PW +
+'@chatapp-db-sljuk.mongodb.net/test?retryWrites=true',
+{
+    useMongoClient: true
+})
 
 const usersRouter = require('./api/routes/users');
 
