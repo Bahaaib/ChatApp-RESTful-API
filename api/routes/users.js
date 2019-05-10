@@ -9,6 +9,7 @@ router.get("/:userId", (req, res, next) => {
     const id = req.params.userId;
 
     User.findById(id)
+        .select('name email _id')
         .exec()
         .then(doc => {
             console.log(doc);

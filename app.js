@@ -9,8 +9,10 @@ mongoose.connect('mongodb+srv://iBahaa:' +
     process.env.MONGO_DB_PW +
     '@chatapp-db-sljuk.mongodb.net/test?retryWrites=true',
     {
-        useMongoClient: true
+        useNewUrlParser: true
     })
+
+    mongoose.Promise = global.Promise;
 
 const usersRouter = require('./api/routes/users');
 
