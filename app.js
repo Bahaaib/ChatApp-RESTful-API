@@ -14,6 +14,7 @@ mongoose.connect('mongodb+srv://iBahaa:' +
 
     mongoose.Promise = global.Promise;
 
+//Create User route
 const usersRouter = require('./api/routes/users');
 
 app.use(morgan('dev'));
