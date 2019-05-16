@@ -1,6 +1,17 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const multer = require('multer');
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/');
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.originalname);
+    }
+});
+const upload = multer({ storage: storage });
 
 const User = require('../models/users');
 
@@ -30,8 +41,10 @@ router.get("/:userId", (req, res, next) => {
         });
 });
 
-//Create User in DB
-router.post("/", (req, res, next) => {
+
+//Create User with profile avatar in DB
+router.post("/", upload.single('user_avatar'), (req, res, next) => {
+    console.log(req.file);
     const user = new User({
         _id: new mongoose.Types.ObjectId,
         name: req.body.name,
@@ -42,7 +55,7 @@ router.post("/", (req, res, next) => {
         .then(result => {
             console.log(result)
             res.status(201).json({
-                message: 'Processing your POST request to /users',
+                message: 'Processing your UPLOADING request to /users',
                 currentUser: user
             });
         })

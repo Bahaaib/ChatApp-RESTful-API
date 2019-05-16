@@ -10,9 +10,9 @@ mongoose.connect('mongodb+srv://iBahaa:' +
     '@chatapp-db-sljuk.mongodb.net/test?retryWrites=true',
     {
         useNewUrlParser: true
-    })
+    });
 
-    mongoose.Promise = global.Promise;
+mongoose.Promise = global.Promise;
 
 //Create User route
 const usersRouter = require('./api/routes/users');
