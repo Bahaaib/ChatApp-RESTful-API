@@ -18,6 +18,7 @@ mongoose.Promise = global.Promise;
 const usersRouter = require('./api/routes/users');
 
 app.use(morgan('dev'));
+//app.use('/uploads', express.static('uploads'));
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 

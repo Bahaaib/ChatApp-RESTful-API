@@ -34,7 +34,7 @@ router.get("/:userId", (req, res, next) => {
     const id = req.params.userId;
 
     User.findById(id)
-        .select('name email _id')
+        .select('name email _id user_avatar')
         .exec()
         .then(doc => {
             console.log(doc);
@@ -58,11 +58,12 @@ router.get("/:userId", (req, res, next) => {
 
 //Create User with profile avatar in DB
 router.post("/", upload.single('user_avatar'), (req, res, next) => {
-    console.log(req.file);
+    console.log(req.file.path);
     const user = new User({
         _id: new mongoose.Types.ObjectId,
         name: req.body.name,
-        email: req.body.email
+        email: req.body.email,
+        user_avatar: req.file.path
     });
     user
         .save()
