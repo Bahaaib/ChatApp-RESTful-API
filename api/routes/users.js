@@ -12,12 +12,20 @@ const storage = multer.diskStorage({
     }
 });
 
-
-const upload = multer({ 
-    storage: storage, 
-    limits: { 
-        fieldSize: 1024 * 1024 * 1 
-    } });
+const fileFilter = (req, file, cb) => {
+    if (file.mimtype === 'image/jpeg' || file.mimtype === 'image/png') {
+        cb(null, true);
+    } else {
+        cb(null, false);
+    }
+};
+const upload = multer({
+    storage: storage,
+    limits: {
+        fieldSize: 1024 * 1024 * 1
+    },
+    fileFilter: fileFilter
+});
 
 const User = require('../models/users');
 
