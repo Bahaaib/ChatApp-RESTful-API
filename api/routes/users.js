@@ -11,7 +11,13 @@ const storage = multer.diskStorage({
         cb(null, file.originalname);
     }
 });
-const upload = multer({ storage: storage });
+
+
+const upload = multer({ 
+    storage: storage, 
+    limits: { 
+        fieldSize: 1024 * 1024 * 1 
+    } });
 
 const User = require('../models/users');
 
