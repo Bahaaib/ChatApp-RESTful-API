@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
 const multer = require('multer');
+const bcrypt = require('bcrypt');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -57,29 +58,51 @@ router.get("/:userId", (req, res, next) => {
 
 
 //Create User with profile avatar in DB
-router.post("/", upload.single('user_avatar'), (req, res, next) => {
-    console.log(req.file.path);
-    const user = new User({
-        _id: new mongoose.Types.ObjectId,
-        name: req.body.name,
-        email: req.body.email,
-        user_avatar: req.file.path
-    });
-    user
-        .save()
-        .then(result => {
-            console.log(result)
-            res.status(201).json({
-                message: 'Processing your UPLOADING request to /users',
-                currentUser: user
-            });
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
+router.post("/signup", upload.single('user_avatar'), (req, res, next) => {
+    var user;
+    bcrypt.hash(req.body.password, 10, (err, hash) => {
+        if (err) {
+            return res.status(500).json({
                 error: err
-            });
-        });
+            })
+        } else {
+            if(req.file){
+                 user = new User({
+                    _id: new mongoose.Types.ObjectId,
+                    name: req.body.name,
+                    email: req.body.email,
+                    password: hash,
+                    user_avatar: req.file.path
+                });
+            }else{
+                user = new User({
+                    _id: new mongoose.Types.ObjectId,
+                    name: req.body.name,
+                    email: req.body.email,
+                    password: hash,
+                });
+            }
+            
+
+            user
+                .save()
+                .then(result => {
+                    console.log(result)
+                    res.status(201).json({
+                        message: 'Processing your UPLOADING request to /users',
+                        currentUser: user
+                    });
+                })
+                .catch(err => {
+                    console.log(err);
+                    res.status(500).json({
+                        error: err
+                    });
+                });
+        }
+    })
+
+
 
 
 });
