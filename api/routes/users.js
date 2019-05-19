@@ -59,51 +59,57 @@ router.get("/:userId", (req, res, next) => {
 
 //Create User with profile avatar in DB
 router.post("/signup", upload.single('user_avatar'), (req, res, next) => {
-    var user;
-    bcrypt.hash(req.body.password, 10, (err, hash) => {
-        if (err) {
-            return res.status(500).json({
-                error: err
-            })
-        } else {
-            if(req.file){
-                 user = new User({
-                    _id: new mongoose.Types.ObjectId,
-                    name: req.body.name,
-                    email: req.body.email,
-                    password: hash,
-                    user_avatar: req.file.path
+    User.find({ email: req.body.email })
+        .exec()
+        .then(user => {
+            if (user.length >= 1) {
+                return res.status(409).json({
+                    message: 'E-mail already exists'
                 });
-            }else{
-                user = new User({
-                    _id: new mongoose.Types.ObjectId,
-                    name: req.body.name,
-                    email: req.body.email,
-                    password: hash,
-                });
-            }
-            
+            } else {
+                bcrypt.hash(req.body.password, 10, (err, hash) => {
+                    if (err) {
+                        return res.status(500).json({
+                            error: err
+                        })
+                    } else {
+                        if (req.file) {
+                            user = new User({
+                                _id: new mongoose.Types.ObjectId,
+                                name: req.body.name,
+                                email: req.body.email,
+                                password: hash,
+                                user_avatar: req.file.path
+                            });
+                        } else {
+                            user = new User({
+                                _id: new mongoose.Types.ObjectId,
+                                name: req.body.name,
+                                email: req.body.email,
+                                password: hash,
+                            });
+                        }
 
-            user
-                .save()
-                .then(result => {
-                    console.log(result)
-                    res.status(201).json({
-                        message: 'Processing your UPLOADING request to /users',
-                        currentUser: user
-                    });
+
+                        user
+                            .save()
+                            .then(result => {
+                                console.log(result)
+                                res.status(201).json({
+                                    message: 'Processing your UPLOADING request to /users',
+                                    currentUser: user
+                                });
+                            })
+                            .catch(err => {
+                                console.log(err);
+                                res.status(500).json({
+                                    error: err
+                                });
+                            });
+                    }
                 })
-                .catch(err => {
-                    console.log(err);
-                    res.status(500).json({
-                        error: err
-                    });
-                });
-        }
-    })
-
-
-
+            }
+        });
 
 });
 
