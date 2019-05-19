@@ -11,6 +11,7 @@ mongoose.connect('mongodb+srv://iBahaa:' +
     {
         useNewUrlParser: true
     });
+    mongoose.set('useCreateIndex', true);
 
 mongoose.Promise = global.Promise;
 
