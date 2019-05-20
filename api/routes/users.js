@@ -113,6 +113,42 @@ router.post("/signup", upload.single('user_avatar'), (req, res, next) => {
 
 });
 
+router.post("/login", (req, res, next) => {
+    User.find({ email: req.body.email })
+        .exec()
+        .then(user => {
+            if (user.length < 1) {
+                return res.status(401).json({
+                    message: 'Authentication failed'
+                });
+            } else {
+                bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+                    if (err) {
+                        return res.status(401).json({
+                            message: 'Authentication failed'
+                        });
+                    } else {
+                        if (result) {
+                            return res.status(200).json({
+                                message: 'Authentication succeeded'
+                            });
+                        } else {
+                            return res.status(401).json({
+                                message: 'Authentication failed'
+                            });
+                        }
+                    }
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
+        });
+});
+
 //Update User info in DB
 router.patch("/:userId", (req, res, next) => {
     const id = req.params.userId;
