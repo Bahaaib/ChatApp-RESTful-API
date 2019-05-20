@@ -1,5 +1,6 @@
 const User = require('../models/users');
-
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.signup_user = (req, res, next) => {
     User.find({ email: req.body.email })
@@ -63,5 +64,53 @@ exports.signup_user = (req, res, next) => {
                     }
                 })
             }
+        });
+}
+
+exports.login_user = (req, res, next) => {
+    User.find({ email: req.body.email })
+        .exec()
+        .then(user => {
+            if (user.length < 1) {
+                return res.status(401).json({
+                    message: 'Authentication failed'
+                });
+            } else {
+                bcrypt.compare(req.body.password, user[0].password, (err, result) => {
+                    if (err) {
+                        return res.status(401).json({
+                            message: 'Authentication failed'
+                        });
+                    } else {
+                        if (result) {
+                            const token = jwt.sign(
+                                {
+                                    email: user[0].email,
+                                    _id: user[0]._id
+                                },
+                                process.env.JWT_KEY,
+                                {
+                                    expiresIn: "1h"
+                                }
+                            );
+                            return res.status(200).json({
+                                message: 'Authentication succeeded',
+                                currentUser: user,
+                                token: token
+                            });
+                        } else {
+                            return res.status(401).json({
+                                message: 'Authentication failed'
+                            });
+                        }
+                    }
+                })
+            }
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).json({
+                error: err
+            });
         });
 }
