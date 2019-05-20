@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const multer = require('multer');
 const checkAuth = require('../middleware/check-auth');
-const userController = require('../controllers/users');
+const UserController = require('../controllers/users');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -29,15 +29,15 @@ const upload = multer({
 });
 
 //Create User with profile avatar in DB
-router.post("/signup", upload.single('user_avatar'), userController.signup_user);
+router.post("/signup", upload.single('user_avatar'), UserController.signup_user);
 
 //Login users to DB
-router.post("/login", userController.login_user);
+router.post("/login", UserController.login_user);
 
 //Update User info in DB
-router.patch("/:userId", checkAuth, userController.patch_user);
+router.patch("/:userId", checkAuth, UserController.patch_user);
 
 //Delete User from DB
-router.delete("/:userId", checkAuth, userController.delete_user);
+router.delete("/:userId", checkAuth, UserController.delete_user);
 
 module.exports = router;
