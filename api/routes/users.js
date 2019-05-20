@@ -39,20 +39,6 @@ router.post("/login", userController.login_user);
 router.patch("/:userId", checkAuth, userController.patch_user);
 
 //Delete User from DB
-router.delete("/:userId", checkAuth, (req, res, next) => {
-    const id = req.params.userId;
-
-    User.remove({ _id: id })
-        .exec()
-        .then(result => {
-            res.status(200).json(result);
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err
-            });
-        });
-});
+router.delete("/:userId", checkAuth, userController.delete_user);
 
 module.exports = router;
