@@ -44,8 +44,6 @@ exports.signup_user = (req, res, next) => {
                                 password: hash,
                             });
                         }
-
-
                         user
                             .save()
                             .then(result => {
@@ -116,7 +114,7 @@ exports.login_user = (req, res, next) => {
         });
 }
 
-exports.patch_user = (req, res, next) => {
+exports.update_user = (req, res, next) => {
     const id = req.params.userId;
     const updateOps = {};
 

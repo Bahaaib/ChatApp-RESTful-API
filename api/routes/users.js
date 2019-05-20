@@ -35,7 +35,7 @@ router.post("/signup", upload.single('user_avatar'), UserController.signup_user)
 router.post("/login", UserController.login_user);
 
 //Update User info in DB
-router.patch("/:userId", checkAuth, UserController.patch_user);
+router.patch("/:userId", checkAuth, UserController.update_user);
 
 //Delete User from DB
 router.delete("/:userId", checkAuth, UserController.delete_user);
