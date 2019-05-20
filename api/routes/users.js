@@ -36,26 +36,7 @@ router.post("/signup", upload.single('user_avatar'), userController.signup_user)
 router.post("/login", userController.login_user);
 
 //Update User info in DB
-router.patch("/:userId", checkAuth, (req, res, next) => {
-    const id = req.params.userId;
-    const updateOps = {};
-
-    for (const ops of req.body) {
-        updateOps[ops.propName] = ops.value;
-    }
-    User.update({ _id: id }, { $set: updateOps })
-        .exec()
-        .then(result => {
-            console.log(result);
-            res.status(200).json(result);
-        })
-        .catch(err => {
-            console.log(err);
-            res.status(500).json({
-                error: err
-            });
-        });
-});
+router.patch("/:userId", checkAuth, userController.patch_user);
 
 //Delete User from DB
 router.delete("/:userId", checkAuth, (req, res, next) => {
