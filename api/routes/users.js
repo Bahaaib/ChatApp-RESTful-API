@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const checkAuth = require('../middleware/check-auth');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -31,33 +32,6 @@ const upload = multer({
 
 const User = require('../models/users');
 
-//Get specific User info from DB
-router.get("/:userId", (req, res, next) => {
-    const id = req.params.userId;
-
-    User.findById(id)
-        .select('name email _id user_avatar')
-        .exec()
-        .then(doc => {
-            console.log(doc);
-            if (doc) {
-                res.status(200).json(doc);
-            } else {
-                res.status(404).json({
-                    message: "User not found"
-                });
-            }
-
-        })
-        .catch(err => {
-            console.log(err)
-            res.status(500).json({
-                error: err
-            });
-        });
-});
-
-
 //Create User with profile avatar in DB
 router.post("/signup", upload.single('user_avatar'), (req, res, next) => {
     User.find({ email: req.body.email })
@@ -68,6 +42,16 @@ router.post("/signup", upload.single('user_avatar'), (req, res, next) => {
                     message: 'E-mail already exists'
                 });
             } else {
+                const token = jwt.sign(
+                    {
+                        email: req.body.email,
+                        _id: req.body._id
+                    },
+                    process.env.JWT_KEY,
+                    {
+                        expiresIn: "1h"
+                    }
+                );
                 bcrypt.hash(req.body.password, 10, (err, hash) => {
                     if (err) {
                         return res.status(500).json({
@@ -97,8 +81,9 @@ router.post("/signup", upload.single('user_avatar'), (req, res, next) => {
                             .then(result => {
                                 console.log(result)
                                 res.status(201).json({
-                                    message: 'Processing your UPLOADING request to /users',
-                                    currentUser: user
+                                    message: 'Processing your SIGN UP..',
+                                    currentUser: user,
+                                    token: token
                                 });
                             })
                             .catch(err => {
@@ -143,6 +128,7 @@ router.post("/login", (req, res, next) => {
                             );
                             return res.status(200).json({
                                 message: 'Authentication succeeded',
+                                currentUser: user,
                                 token: token
                             });
                         } else {
@@ -163,12 +149,12 @@ router.post("/login", (req, res, next) => {
 });
 
 //Update User info in DB
-router.patch("/:userId", (req, res, next) => {
+router.patch("/:userId", checkAuth, (req, res, next) => {
     const id = req.params.userId;
     const updateOps = {};
 
     for (const ops of req.body) {
-        updateOps[ops.probName] = ops.value;
+        updateOps[ops.propName] = ops.value;
     }
     User.update({ _id: id }, { $set: updateOps })
         .exec()
@@ -185,7 +171,7 @@ router.patch("/:userId", (req, res, next) => {
 });
 
 //Delete User from DB
-router.delete("/:userId", (req, res, next) => {
+router.delete("/:userId", checkAuth, (req, res, next) => {
     const id = req.params.userId;
 
     User.remove({ _id: id })
