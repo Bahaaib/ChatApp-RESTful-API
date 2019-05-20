@@ -85,4 +85,7 @@ typings/
 # DynamoDB Local files
 .dynamodb/
 
+# Nodemon
+nodemon.json*
+
 build/*

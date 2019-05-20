@@ -3,6 +3,7 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const multer = require('multer');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -113,6 +114,7 @@ router.post("/signup", upload.single('user_avatar'), (req, res, next) => {
 
 });
 
+//Login users to DB
 router.post("/login", (req, res, next) => {
     User.find({ email: req.body.email })
         .exec()
@@ -129,8 +131,19 @@ router.post("/login", (req, res, next) => {
                         });
                     } else {
                         if (result) {
+                            const token = jwt.sign(
+                                {
+                                    email: user[0].email,
+                                    _id: user[0]._id
+                                },
+                                process.env.JWT_KEY,
+                                {
+                                    expiresIn: "1h"
+                                }
+                            );
                             return res.status(200).json({
-                                message: 'Authentication succeeded'
+                                message: 'Authentication succeeded',
+                                token: token
                             });
                         } else {
                             return res.status(401).json({
